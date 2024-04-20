@@ -5,7 +5,7 @@ const router = new Router();
 
 router.post("/login", async (context) => {
     const body: LoginDto = await context.request.body.json();
-    console.log(body);
+    context.response.body = {};
 });
 
 export default router;
