@@ -8,17 +8,13 @@ export default class EnvironmentVariables {
         if (EnvironmentVariables.instance) {
             throw new Error("Error - use EnvironmentVariables.getInstance()");
         }
-        this.member = 0;
     }
 
     static getInstance(): UserDefinedEnvironmentVariables {
         EnvironmentVariables.instance = EnvironmentVariables.instance || new UserDefinedEnvironmentVariables();
         return EnvironmentVariables.instance;
     }
-
-    member: number;
 }
-
 
 class UserDefinedEnvironmentVariables {
   public postgresDatabase: string | undefined;
