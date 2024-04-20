@@ -1,7 +1,7 @@
-import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-import router from "./router-one.ts";
+import { Application } from "https://deno.land/x/oak/mod.ts";
+import indexRouter from "./routes/index.ts"; 
 
 const app = new Application();
-app.use(router.routes());
+app.use(indexRouter.routes());
 
 await app.listen({ port: 8080 });
