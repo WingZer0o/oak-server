@@ -4,5 +4,4 @@ import loginRouter from "./user-auth/login-router.ts";
 const indexRouter = new Router();
 indexRouter.use(loginRouter.routes());
 
-
 export default indexRouter;
