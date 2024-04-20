@@ -3,7 +3,6 @@ import "https://deno.land/std@0.223.0/dotenv/load.ts";
 
 export default class EnvironmentVariables {
     private static instance: UserDefinedEnvironmentVariables;
-    //Assign "new Singleton()" here to avoid lazy initialisation
 
     constructor() {
         if (EnvironmentVariables.instance) {
