@@ -1,0 +1,12 @@
+{
+    "tasks": {
+        "start": "npx dotenv -- denon run --allow-all index.ts"
+    },
+    "imports": {
+        "std": "https://deno.land/std@0.223.0",
+        "oak": "https://deno.land/x/oak@v16.0.0/mod.ts",
+        "oakRouter": "https://deno.land/x/oak@v16.0.0/router.ts",
+        "cors": "https://deno.land/x/cors@v1.2.2/mod.ts",
+        "bcrypt": "https://deno.land/x/bcrypt@v0.3.0/mod.ts"
+    }
+}
