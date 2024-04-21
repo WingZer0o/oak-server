@@ -1,0 +1,1 @@
+{"name":"ffi","littleEndian":true,"symbols":{"argon2_hash_password":{"parameters":["str"],"result":"str","nonBlocking":false}},"typeDefs":{},"tsTypes":{}}

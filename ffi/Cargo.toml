@@ -1,0 +1,16 @@
+[package]
+name = "ffi"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+argon2 = "0.5.3"
+deno_bindgen = "0.8.1"
+rand = "0.8.5"
+serde = { version = "1", features = ["derive"] }
+
+[lib]
+name = "ffi"
+crate-type = ["cdylib"]

@@ -3,7 +3,8 @@ import { RegisterDto } from "../../models/user-auth/register-dto.ts";
 import { User } from "../../generated/client/index.d.ts";
 import { Base400Response } from "../../models/user-auth/400-responses/base-400-response.ts";
 import { registerDtoValidation } from "../../common/validation/register-dto-validation.ts";
-import { Router, RouterContext, bcrypt } from '../../deps.ts';
+import { Router, RouterContext } from '../../deps.ts';
+import { argon2_hash_password } from "../../ffi/bindings/bindings.ts";
 
 const prisma = new PrismaClient();
 const router = new Router();
@@ -36,7 +37,7 @@ const usersFound = async (context: RouterContext<"/register", Record<string | nu
 }
 
 const noUsersFound = async (context: RouterContext<"/register", Record<string | number, string | undefined>, Record<string, any>>, body: RegisterDto) => {
-  const hashedPassword: string = await bcrypt.hash(body.password);
+  const hashedPassword: string = argon2_hash_password(body.password);
   await prisma.user.create({
     data: {
       email: body.email,
