@@ -1,4 +1,4 @@
-import { Router } from "https://deno.land/x/oak/mod.ts";
+import { Router } from '../../deps.ts';
 import { PrismaClient } from '../../generated/client/deno/edge.ts'
 import { LoginDto } from "../../models/user-auth/login-dto.ts";
 

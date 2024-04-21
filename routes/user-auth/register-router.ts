@@ -1,11 +1,9 @@
-import { Router, RouterContext } from "https://deno.land/x/oak/mod.ts";
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.3.0/mod.ts";
-
 import { PrismaClient } from '../../generated/client/deno/edge.ts'
 import { RegisterDto } from "../../models/user-auth/register-dto.ts";
 import { User } from "../../generated/client/index.d.ts";
 import { Base400Response } from "../../models/user-auth/400-responses/base-400-response.ts";
 import { registerDtoValidation } from "../../common/validation/register-dto-validation.ts";
+import { Router, RouterContext, bcrypt } from '../../deps.ts';
 
 const prisma = new PrismaClient();
 const router = new Router();
