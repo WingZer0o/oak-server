@@ -30,14 +30,14 @@ router.post(
       return invalidRequestBody(context, loginValidation.message);
     }
     const user: User = await prisma.user.findFirst({
-      where: { email: body.email },
+      where: { Email: body.email },
     });
     if (!user) {
       return noUserFound(context);
     }
     const passwordVerified = await bcrypt.compare(
       body.password,
-      user.password,
+      user.Password,
     );
     if (!passwordVerified) {
       return passwordInvalid(context);

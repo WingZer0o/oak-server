@@ -11,11 +11,11 @@
             "program": "${workspaceFolder}/index.ts",
             "cwd": "${workspaceFolder}",
             "env": {},
-            "runtimeExecutable": "deno",
+            "runtimeExecutable": "/home/mm/.deno/bin/deno",
             "runtimeArgs": [
                 "run",
                 "--inspect-wait",
-                "--allow-all"
+                "-A"
             ],
             "envFile": "${workspaceFolder}/.env",
             "attachSimplePort": 9229

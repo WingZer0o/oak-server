@@ -23,7 +23,7 @@ router.post(
       await invalidRequestBody(context, validationResult.message);
     } else {
       const user: User = await prisma.user.findFirst({
-        where: { email: body.email },
+        where: { Email: body.email },
       });
       if (user) {
         await usersFound(context);
@@ -72,8 +72,8 @@ const noUsersFound = async (
   const hashedPassword: string = await bcrypt.hash(body.password);
   await prisma.user.create({
     data: {
-      email: body.email,
-      password: hashedPassword,
+      Email: body.email,
+      Password: hashedPassword,
     },
   });
   context.response.status = 200;
