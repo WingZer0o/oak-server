@@ -4,7 +4,6 @@ import {
   verify,
 } from "https://deno.land/x/djwt@v3.0.2/mod.ts";
 import { User } from "../../generated/client/index.d.ts";
-import { resolve } from "jsr:@std/path@0.223/resolve";
 
 export class JWT {
   async generateToken(user: User, secondsToAddToExp: number): Promise<string> {
