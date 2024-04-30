@@ -32,11 +32,11 @@ exports.$Enums = {}
 
 /**
  * Prisma Client JS version: 5.12.1
- * Query Engine version: 473ed3124229e22d881cb7addf559799debae1ab
+ * Query Engine version: b9a39a7ee606c28e3455d0fd60e78c3ba82b1a2b
  */
 Prisma.prismaVersion = {
   client: "5.12.1",
-  engine: "473ed3124229e22d881cb7addf559799debae1ab"
+  engine: "b9a39a7ee606c28e3455d0fd60e78c3ba82b1a2b"
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -119,7 +119,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Code\\SalesApp\\oak-server\\generated\\client",
+      "value": "/home/mm/Code/SalesAPp/oak-server/generated/client",
       "fromEnvVar": null
     },
     "config": {
@@ -128,7 +128,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "debian-openssl-3.0.x",
         "native": true
       }
     ],
@@ -143,7 +143,7 @@ const config = {
   },
   "relativePath": "../../prisma",
   "clientVersion": "5.12.1",
-  "engineVersion": "473ed3124229e22d881cb7addf559799debae1ab",
+  "engineVersion": "b9a39a7ee606c28e3455d0fd60e78c3ba82b1a2b",
   "datasourceNames": [
     "db"
   ],
