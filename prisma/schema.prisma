@@ -16,27 +16,27 @@ datasource db {
 }
 
 model User {
-  Id          Int           @id @default(autoincrement())
-  Email       String
-  Password    String
+  id          Int           @id @default(autoincrement())
+  email       String
+  password    String
   ChatMessage ChatMessage[]
   ChatChannel ChatChannel[]
 }
 
 model ChatChannel {
-  Id          Int           @id @default(autoincrement())
-  UserId      Int
-  User        User          @relation(fields: [UserId], references: [Id])
+  id          Int           @id @default(autoincrement())
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id])
   ChatMessage ChatMessage[]
 }
 
 model ChatMessage {
-  Id            Int         @id @default(autoincrement())
-  Message       String
-  Timestamp     DateTime
-  IsChatBot     Boolean
-  ChatHistoryId Int
-  ChatChannel   ChatChannel @relation(fields: [ChatHistoryId], references: [Id])
-  User          User?       @relation(fields: [UserId], references: [Id])
-  UserId        Int?
+  id            Int         @id @default(autoincrement())
+  message       String
+  timestamp     DateTime
+  isChatBot     Boolean
+  chatHistoryId Int
+  ChatChannel   ChatChannel @relation(fields: [chatHistoryId], references: [id])
+  User          User?       @relation(fields: [userId], references: [id])
+  userId        Int?
 }
