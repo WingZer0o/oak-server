@@ -54,7 +54,7 @@ router.post("/simple-chat", jwtRouteValidation, async (
   try {
     const body: SimpleChat = await context.request.body.json();
     // TODO: chat channels needs to be tied specific chat windows in the UI. For now we will be a single chat channel for all messages.
-    await prisma.chatMessage.create({
+    const newUserMessage = await prisma.chatMessage.create({
       data: {
         message: body.message,
         timestamp: new Date(),
@@ -77,6 +77,7 @@ router.post("/simple-chat", jwtRouteValidation, async (
       }
     } else {
       cacheChatMessages = JSON.parse(cacheChatMessages);
+      cacheChatMessages.push(newUserMessage);
     }
     const chatModel = new ChatOllama({
       baseUrl: Deno.env.get("LLM_URL"),
