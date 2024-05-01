@@ -12,6 +12,8 @@ import { ChatMessage } from "../../generated/client/index.d.ts";
 import { AIMessage, HumanMessage } from "npm:@langchain/core/messages";
 import { StringOutputParser } from "npm:@langchain/core/output_parsers";
 import { SimpleChatResponseDto } from "../../models/chat/simple-chat-response-dto.ts";
+import { RedisCacheKeys } from "../../common/redis/redis-cache-keys.ts";
+import redisClient from "../../common/redis/redis-client.ts";
 
 const prisma = new PrismaClient();
 const router = new Router();
@@ -51,52 +53,63 @@ router.post("/simple-chat", jwtRouteValidation, async (
 ) => {
   try {
     const body: SimpleChat = await context.request.body.json();
-  // TODO: chat channels needs to be tied specific chat windows in the UI. For now we will be a single chat channel for all messages.
-  await prisma.chatMessage.create({
-    data: {
-      message: body.message,
-      timestamp: new Date(),
-      isChatBot: false,
-      chatHistoryId: body.chatChannelId,
-      userId: context.state.userId,
-    },
-  });
-  const chatMessages: ChatMessage = await prisma.chatMessage.findMany({
-    where: { chatHistoryId: body.chatChannelId },
-    orderBy: { timestamp: "asc" },
-  });
-  const chatModel = new ChatOllama({
-    baseUrl: "http://localhost:11434", // Default value
-    model: "llama3",
-  });
-  const contextualizeQSystemPrompt =
-    `You are a helpful assistant with a smile on her face, no swearing, racism, etc. Given a chat history and the last user question which might 
-  reference context in the chat history, generate a response that is relevant to the user question based on the information in the user chat and your other trained data sets.`;
-  const contextualizeQPrompt = ChatPromptTemplate.fromMessages([
-    ["system", contextualizeQSystemPrompt],
-    new MessagesPlaceholder("chatHistory"),
-    ["user", "{question}"],
-  ]);
-  const contextualizeQChain = contextualizeQPrompt.pipe(chatModel).pipe(
-    new StringOutputParser(),
-  );
-  const response = await contextualizeQChain.invoke({
-    chatHistory: chatMessages.map((chatMessage: ChatMessage) => {
-      return (chatMessage.isChatBot)
-        ? new AIMessage(chatMessage.message)
-        : new HumanMessage(chatMessage.message);
-    }),
-    question: body.message,
-  });
+    // TODO: chat channels needs to be tied specific chat windows in the UI. For now we will be a single chat channel for all messages.
     await prisma.chatMessage.create({
-        data: {
+      data: {
+        message: body.message,
+        timestamp: new Date(),
+        isChatBot: false,
+        chatHistoryId: body.chatChannelId,
+        userId: context.state.userId,
+      },
+    });
+    const cacheKey = RedisCacheKeys.ChatHistory + body.chatChannelId;
+    let cacheChatMessages = await redisClient.get(cacheKey);
+    if (!cacheChatMessages) {
+      cacheChatMessages = await prisma.chatMessage.findMany({
+        where: { chatHistoryId: body.chatChannelId },
+        orderBy: { timestamp: "asc" },
+      });
+      if (cacheChatMessages?.length > 0) {
+        await redisClient.set(cacheKey, JSON.stringify(cacheChatMessages));
+      }
+    } else {
+      cacheChatMessages = JSON.parse(cacheChatMessages);
+    }
+    const chatModel = new ChatOllama({
+      baseUrl: Deno.env.get("LLM_URL"),
+      model: Deno.env.get("LLM_MODEL"),
+    });
+    const contextualizeQSystemPrompt =
+      `You are a helpful assistant with a smile on her face, no swearing, racism, etc. Given a chat history and the last user question which might 
+  reference context in the chat history, generate a response that is relevant to the user question based on the information in the user chat and your other trained data sets.`;
+    const contextualizeQPrompt = ChatPromptTemplate.fromMessages([
+      ["system", contextualizeQSystemPrompt],
+      new MessagesPlaceholder("chatHistory"),
+      ["user", "{question}"],
+    ]);
+    const contextualizeQChain = contextualizeQPrompt.pipe(chatModel).pipe(
+      new StringOutputParser(),
+    );
+    const response = await contextualizeQChain.invoke({
+      chatHistory: cacheChatMessages.map((chatMessage: ChatMessage) => {
+        return (chatMessage.isChatBot)
+          ? new AIMessage(chatMessage.message)
+          : new HumanMessage(chatMessage.message);
+      }),
+      question: body.message,
+    });
+    const newChatBotMessage = await prisma.chatMessage.create({
+      data: {
         message: response,
         timestamp: new Date(),
         isChatBot: true,
         chatHistoryId: body.chatChannelId,
         userId: context.state.userId,
-        },
+      },
     });
+    cacheChatMessages.push(newChatBotMessage);
+    await redisClient.set(cacheKey, JSON.stringify(cacheChatMessages));
     context.response.status = 200;
     context.response.body = new SimpleChatResponseDto(response);
   } catch (error) {
