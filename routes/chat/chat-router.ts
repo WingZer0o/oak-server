@@ -71,7 +71,9 @@ router.post("/simple-chat", jwtRouteValidation, async (
         orderBy: { timestamp: "asc" },
       });
       if (cacheChatMessages?.length > 0) {
-        await redisClient.set(cacheKey, JSON.stringify(cacheChatMessages));
+        await redisClient.set(cacheKey, JSON.stringify(cacheChatMessages), {
+          EX: 60 * 60,
+        });
       }
     } else {
       cacheChatMessages = JSON.parse(cacheChatMessages);
@@ -109,7 +111,9 @@ router.post("/simple-chat", jwtRouteValidation, async (
       },
     });
     cacheChatMessages.push(newChatBotMessage);
-    await redisClient.set(cacheKey, JSON.stringify(cacheChatMessages));
+    await redisClient.set(cacheKey, JSON.stringify(cacheChatMessages), {
+      EX: 60 * 60,
+    });
     context.response.status = 200;
     context.response.body = new SimpleChatResponseDto(response);
   } catch (error) {
