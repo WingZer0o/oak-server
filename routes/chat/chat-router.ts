@@ -12,6 +12,7 @@ import { AIMessage, HumanMessage } from "npm:@langchain/core/messages";
 import { StringOutputParser } from "npm:@langchain/core/output_parsers";
 import { RedisCacheKeys } from "../../common/redis/redis-cache-keys.ts";
 import redisClient from "../../common/redis/redis-client.ts";
+import { ChatMessageDto } from "../../models/chat/chat-message-dto.ts";
 
 const prisma = new PrismaClient();
 const router = new Router();
@@ -36,8 +37,11 @@ router.get("/chat-channel", jwtRouteValidation, async (
       },
     });
   }
+  const chatMessages = chatChannel?.chatMessages.map((chatMessage: ChatMessage) => {
+    return new ChatMessageDto(chatMessage.id, chatMessage.message, chatMessage.timestamp, chatMessage.isChatBot, chatMessage.chatChannelId, chatMessage.userId, true);
+  });
   context.response.status = 200;
-  context.response.body = new ChatChannelResponseDto(chatChannel.id, chatChannel?.chatMessages);
+  context.response.body = new ChatChannelResponseDto(chatChannel.id, chatMessages);
 });
 
 router.post("/simple-chat", jwtRouteValidation, async (

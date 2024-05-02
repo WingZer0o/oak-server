@@ -1,10 +1,10 @@
-import { ChatMessage } from "../../generated/client/index.d.ts";
+import { ChatMessageDto } from "./chat-message-dto.ts";
 
 export class ChatChannelResponseDto {
     public channelId: number;
-    public chatMessages: ChatMessage[];
+    public chatMessages: ChatMessageDto[];
 
-    constructor(channelId: number, chatMessages: ChatMessage[]) {
+    constructor(channelId: number, chatMessages: ChatMessageDto[]) {
         this.channelId = channelId;
         this.chatMessages = chatMessages;
     }
