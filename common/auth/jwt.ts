@@ -27,7 +27,7 @@ export class JWT {
     const jwt = await create({ alg: "PS512", typ: "JWT" }, {
       userId: user.id,
       publicKey: publicKeyBase64,
-      exp: getNumericDate(60 * 60),
+      exp: getNumericDate(secondsToAddToExp),
     }, keyPair.privateKey);
     return jwt;
   }

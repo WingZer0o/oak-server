@@ -5,13 +5,11 @@ import {
   MessagesPlaceholder,
 } from "npm:@langchain/core/prompts";
 import { ChatOllama } from "npm:@langchain/community/chat_models/ollama";
-import { SimpleChat } from "../../models/chat/simple-chat.ts";
 import { jwtRouteValidation } from "../middleware/jwt-validation.ts";
 import { ChatChannelResponseDto } from "../../models/chat/chat-channel-response-dto.ts";
-import { ChatMessage } from "../../generated/client/index.d.ts";
+import { ChatChannel, ChatMessage } from "../../generated/client/index.d.ts";
 import { AIMessage, HumanMessage } from "npm:@langchain/core/messages";
 import { StringOutputParser } from "npm:@langchain/core/output_parsers";
-import { SimpleChatResponseDto } from "../../models/chat/simple-chat-response-dto.ts";
 import { RedisCacheKeys } from "../../common/redis/redis-cache-keys.ts";
 import redisClient from "../../common/redis/redis-client.ts";
 
@@ -27,21 +25,19 @@ router.get("/chat-channel", jwtRouteValidation, async (
 ) => {
   // TODO: ideally chat channels should be determined by the chat window that is open in the UI.
   // for the time being this will be a single chat channel for all messages.
-  let chatChannel = await prisma.chatChannel.findFirst({
+  let chatChannel: ChatChannel = await prisma.chatChannel.findFirst({
     where: { userId: context.state.userId },
+    include: { chatMessages: {orderBy: {timestamp: "asc"} }}
   });
   if (!chatChannel) {
-    await prisma.chatChannel.create({
+    chatChannel = await prisma.chatChannel.create({
       data: {
         userId: context.state.userId,
       },
     });
   }
-  chatChannel = await prisma.chatChannel.findFirst({
-    where: { userId: context.state.userId },
-  });
   context.response.status = 200;
-  context.response.body = new ChatChannelResponseDto(chatChannel.id);
+  context.response.body = new ChatChannelResponseDto(chatChannel.id, chatChannel?.chatMessages);
 });
 
 router.post("/simple-chat", jwtRouteValidation, async (
@@ -52,22 +48,23 @@ router.post("/simple-chat", jwtRouteValidation, async (
   >,
 ) => {
   try {
-    const body: SimpleChat = await context.request.body.json();
+    const body: ChatMessage = await context.request.body.json();
     // TODO: chat channels needs to be tied specific chat windows in the UI. For now we will be a single chat channel for all messages.
     const newUserMessage = await prisma.chatMessage.create({
       data: {
+        id: body.id,
         message: body.message,
-        timestamp: new Date(),
-        isChatBot: false,
-        chatHistoryId: body.chatChannelId,
-        userId: context.state.userId,
+        timestamp: body.timestamp,
+        isChatBot: body.isChatBot,
+        chatChannelId: body.chatChannelId,
+        userId: body.userId,
       },
     });
     const cacheKey = RedisCacheKeys.ChatHistory + body.chatChannelId;
     let cacheChatMessages = await redisClient.get(cacheKey);
     if (!cacheChatMessages) {
       cacheChatMessages = await prisma.chatMessage.findMany({
-        where: { chatHistoryId: body.chatChannelId },
+        where: { chatChannelId: body.chatChannelId },
         orderBy: { timestamp: "asc" },
       });
       if (cacheChatMessages?.length > 0) {
@@ -107,7 +104,7 @@ router.post("/simple-chat", jwtRouteValidation, async (
         message: response,
         timestamp: new Date(),
         isChatBot: true,
-        chatHistoryId: body.chatChannelId,
+        chatChannelId: body.chatChannelId,
         userId: context.state.userId,
       },
     });
@@ -116,7 +113,7 @@ router.post("/simple-chat", jwtRouteValidation, async (
       EX: 60 * 60,
     });
     context.response.status = 200;
-    context.response.body = new SimpleChatResponseDto(response);
+    context.response.body = newChatBotMessage;
   } catch (error) {
     context.response.status = 500;
     context.response.body = { message: error.message };

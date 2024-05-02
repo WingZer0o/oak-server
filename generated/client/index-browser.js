@@ -135,7 +135,7 @@ exports.Prisma.ChatMessageScalarFieldEnum = {
   message: 'message',
   timestamp: 'timestamp',
   isChatBot: 'isChatBot',
-  chatHistoryId: 'chatHistoryId',
+  chatChannelId: 'chatChannelId',
   userId: 'userId'
 };
 
