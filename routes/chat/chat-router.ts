@@ -12,11 +12,39 @@ import { StringOutputParser } from "npm:@langchain/core/output_parsers";
 import { RedisCacheKeys } from "../../common/redis/redis-cache-keys.ts";
 import redisClient from "../../common/redis/redis-client.ts";
 import { ChatMessageDto } from "../../models/chat/chat-message-dto.ts";
-import { ChatChannelDto, ChatChannelListDto } from "../../models/chat/chat-channel-list-dto.ts";
+import {
+  ChatChannelDto,
+  ChatChannelListDto,
+} from "../../models/chat/chat-channel-list-dto.ts";
 import { ChatChannelResponseDto } from "../../models/chat/chat-channel-response-dto.ts";
+import { AddChatChannelDto } from "../../models/chat/add-chat-channel-dto.ts";
 
 const prisma = new PrismaClient();
 const router = new Router();
+
+router.post("/add-chat-channel", jwtRouteValidation, async (
+  context: RouterContext<
+    "/add-chat-channel",
+    Record<string | number, string | undefined>,
+    Record<string, any>
+  >,
+) => {
+  try {
+    const body: AddChatChannelDto = await context.request.body.json();
+    const newChatChannel = await prisma.chatChannel.create({
+      data: {
+        chatChannelName: body.channelName,
+        userId: context.state.userId,
+      },
+    });
+    const newChatChannelDto = new ChatChannelDto(newChatChannel.id, newChatChannel.chatChannelName, newChatChannel.userId);
+    context.response.status = 200;
+    context.response.body = newChatChannelDto;
+  } catch (error) {
+    context.response.status = 500;
+    context.response.body = { message: error.message };
+  }
+});
 
 router.get("/chat-channel-list", jwtRouteValidation, async (
   context: RouterContext<
@@ -28,7 +56,7 @@ router.get("/chat-channel-list", jwtRouteValidation, async (
   try {
     let chatChannels: ChatChannel[] = await prisma.chatChannel.findMany({
       where: { userId: context.state.userId },
-      orderBy: { createdAt: "desc"}
+      orderBy: { createdAt: "desc" },
     });
     if (chatChannels?.length === 0) {
       const newChatChanel = await prisma.chatChannel.create({
@@ -39,7 +67,7 @@ router.get("/chat-channel-list", jwtRouteValidation, async (
       });
       chatChannels.push(newChatChanel);
     }
-  
+
     const chatChannelsListDto: ChatChannelListDto = new ChatChannelListDto(
       chatChannels.map((chatChannel: ChatChannel) => {
         return new ChatChannelDto(
@@ -54,7 +82,7 @@ router.get("/chat-channel-list", jwtRouteValidation, async (
   } catch (error) {
     context.response.status = 500;
     context.response.body = { message: error.message };
-  } 
+  }
 });
 
 router.get("/chat-channel", jwtRouteValidation, async (
@@ -65,8 +93,9 @@ router.get("/chat-channel", jwtRouteValidation, async (
   >,
 ) => {
   try {
+    const chatChannelId = context.request.url.searchParams.get("channelId");
     let chatChannel: ChatChannel = await prisma.chatChannel.findFirst({
-      where: { userId: context.state.userId },
+      where: { id: chatChannelId,  },
       include: { chatMessages: { orderBy: { timestamp: "asc" } } },
     });
     if (!chatChannel) {
