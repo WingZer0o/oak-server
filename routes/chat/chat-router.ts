@@ -94,36 +94,57 @@ router.get("/chat-channel", jwtRouteValidation, async (
 ) => {
   try {
     const chatChannelId = context.request.url.searchParams.get("channelId");
-    let chatChannel: ChatChannel = await prisma.chatChannel.findFirst({
-      where: { id: chatChannelId,  },
-      include: { chatMessages: { orderBy: { timestamp: "asc" } } },
-    });
-    if (!chatChannel) {
-      chatChannel = await prisma.chatChannel.create({
-        data: {
-          userId: context.state.userId,
-          chatChannelName: "Default Chat Channel",
-        },
+    const cacheKey = RedisCacheKeys.ChatHistory + chatChannelId;
+    let cacheChatMessages = await redisClient.get(cacheKey);
+    if (!cacheChatMessages) {
+      let chatChannel: ChatChannel = await prisma.chatChannel.findFirst({
+        where: { id: chatChannelId,  },
+        include: { chatMessages: { orderBy: { timestamp: "asc" } } },
       });
+      const chatMessages = chatChannel?.chatMessages?.map(
+        (chatMessage: ChatMessage) => {
+          return new ChatMessageDto(
+            chatMessage.id,
+            chatMessage.message,
+            chatMessage.timestamp,
+            chatMessage.isChatBot,
+            chatMessage.chatChannelId,
+            chatMessage.userId,
+            true,
+          );
+        },
+      );
+      if (chatMessages?.length > 0) {
+        await redisClient.set(cacheKey, JSON.stringify(chatChannel?.chatMessages), {
+          EX: 60 * 60,
+        });
+      }
+      context.response.status = 200;
+      context.response.body = new ChatChannelResponseDto(
+        chatChannel.id,
+        chatMessages,
+      );
+    } else {
+      cacheChatMessages = JSON.parse(cacheChatMessages);
+      const chatMessages = cacheChatMessages.map(
+        (chatMessage: ChatMessage) => {
+          return new ChatMessageDto(
+            chatMessage.id,
+            chatMessage.message,
+            chatMessage.timestamp,
+            chatMessage.isChatBot,
+            chatMessage.chatChannelId,
+            chatMessage.userId,
+            true,
+          );
+        },
+      );
+      context.response.status = 200;
+      context.response.body = new ChatChannelResponseDto(
+        chatChannelId,
+        chatMessages,
+      );
     }
-    const chatMessages = chatChannel?.chatMessages?.map(
-      (chatMessage: ChatMessage) => {
-        return new ChatMessageDto(
-          chatMessage.id,
-          chatMessage.message,
-          chatMessage.timestamp,
-          chatMessage.isChatBot,
-          chatMessage.chatChannelId,
-          chatMessage.userId,
-          true,
-        );
-      },
-    );
-    context.response.status = 200;
-    context.response.body = new ChatChannelResponseDto(
-      chatChannel.id,
-      chatMessages,
-    );
   } catch (error) {
     context.response.status = 500;
     context.response.body = { message: error.message };
