@@ -2064,34 +2064,46 @@ export namespace Prisma {
 
   export type ChatChannelMinAggregateOutputType = {
     id: string | null
+    chatChannelName: string | null
     userId: string | null
+    createdAt: Date | null
   }
 
   export type ChatChannelMaxAggregateOutputType = {
     id: string | null
+    chatChannelName: string | null
     userId: string | null
+    createdAt: Date | null
   }
 
   export type ChatChannelCountAggregateOutputType = {
     id: number
+    chatChannelName: number
     userId: number
+    createdAt: number
     _all: number
   }
 
 
   export type ChatChannelMinAggregateInputType = {
     id?: true
+    chatChannelName?: true
     userId?: true
+    createdAt?: true
   }
 
   export type ChatChannelMaxAggregateInputType = {
     id?: true
+    chatChannelName?: true
     userId?: true
+    createdAt?: true
   }
 
   export type ChatChannelCountAggregateInputType = {
     id?: true
+    chatChannelName?: true
     userId?: true
+    createdAt?: true
     _all?: true
   }
 
@@ -2169,7 +2181,9 @@ export namespace Prisma {
 
   export type ChatChannelGroupByOutputType = {
     id: string
+    chatChannelName: string
     userId: string
+    createdAt: Date
     _count: ChatChannelCountAggregateOutputType | null
     _min: ChatChannelMinAggregateOutputType | null
     _max: ChatChannelMaxAggregateOutputType | null
@@ -2191,7 +2205,9 @@ export namespace Prisma {
 
   export type ChatChannelSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    chatChannelName?: boolean
     userId?: boolean
+    createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     chatMessages?: boolean | ChatChannel$chatMessagesArgs<ExtArgs>
     _count?: boolean | ChatChannelCountOutputTypeDefaultArgs<ExtArgs>
@@ -2199,7 +2215,9 @@ export namespace Prisma {
 
   export type ChatChannelSelectScalar = {
     id?: boolean
+    chatChannelName?: boolean
     userId?: boolean
+    createdAt?: boolean
   }
 
   export type ChatChannelInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2217,7 +2235,9 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      chatChannelName: string
       userId: string
+      createdAt: Date
     }, ExtArgs["result"]["chatChannel"]>
     composites: {}
   }
@@ -2616,7 +2636,9 @@ export namespace Prisma {
    */ 
   interface ChatChannelFieldRefs {
     readonly id: FieldRef<"ChatChannel", 'String'>
+    readonly chatChannelName: FieldRef<"ChatChannel", 'String'>
     readonly userId: FieldRef<"ChatChannel", 'String'>
+    readonly createdAt: FieldRef<"ChatChannel", 'DateTime'>
   }
     
 
@@ -3940,7 +3962,9 @@ export namespace Prisma {
 
   export const ChatChannelScalarFieldEnum: {
     id: 'id',
-    userId: 'userId'
+    chatChannelName: 'chatChannelName',
+    userId: 'userId',
+    createdAt: 'createdAt'
   };
 
   export type ChatChannelScalarFieldEnum = (typeof ChatChannelScalarFieldEnum)[keyof typeof ChatChannelScalarFieldEnum]
@@ -4092,14 +4116,18 @@ export namespace Prisma {
     OR?: ChatChannelWhereInput[]
     NOT?: ChatChannelWhereInput | ChatChannelWhereInput[]
     id?: StringFilter<"ChatChannel"> | string
+    chatChannelName?: StringFilter<"ChatChannel"> | string
     userId?: StringFilter<"ChatChannel"> | string
+    createdAt?: DateTimeFilter<"ChatChannel"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
     chatMessages?: ChatMessageListRelationFilter
   }
 
   export type ChatChannelOrderByWithRelationInput = {
     id?: SortOrder
+    chatChannelName?: SortOrder
     userId?: SortOrder
+    createdAt?: SortOrder
     user?: UserOrderByWithRelationInput
     chatMessages?: ChatMessageOrderByRelationAggregateInput
   }
@@ -4109,14 +4137,18 @@ export namespace Prisma {
     AND?: ChatChannelWhereInput | ChatChannelWhereInput[]
     OR?: ChatChannelWhereInput[]
     NOT?: ChatChannelWhereInput | ChatChannelWhereInput[]
+    chatChannelName?: StringFilter<"ChatChannel"> | string
     userId?: StringFilter<"ChatChannel"> | string
+    createdAt?: DateTimeFilter<"ChatChannel"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
     chatMessages?: ChatMessageListRelationFilter
   }, "id">
 
   export type ChatChannelOrderByWithAggregationInput = {
     id?: SortOrder
+    chatChannelName?: SortOrder
     userId?: SortOrder
+    createdAt?: SortOrder
     _count?: ChatChannelCountOrderByAggregateInput
     _max?: ChatChannelMaxOrderByAggregateInput
     _min?: ChatChannelMinOrderByAggregateInput
@@ -4127,7 +4159,9 @@ export namespace Prisma {
     OR?: ChatChannelScalarWhereWithAggregatesInput[]
     NOT?: ChatChannelScalarWhereWithAggregatesInput | ChatChannelScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"ChatChannel"> | string
+    chatChannelName?: StringWithAggregatesFilter<"ChatChannel"> | string
     userId?: StringWithAggregatesFilter<"ChatChannel"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"ChatChannel"> | Date | string
   }
 
   export type ChatMessageWhereInput = {
@@ -4245,40 +4279,54 @@ export namespace Prisma {
 
   export type ChatChannelCreateInput = {
     id?: string
+    chatChannelName: string
+    createdAt?: Date | string
     user: UserCreateNestedOneWithoutChatChannelsInput
     chatMessages?: ChatMessageCreateNestedManyWithoutChatChannelInput
   }
 
   export type ChatChannelUncheckedCreateInput = {
     id?: string
+    chatChannelName: string
     userId: string
+    createdAt?: Date | string
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutChatChannelInput
   }
 
   export type ChatChannelUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    chatChannelName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutChatChannelsNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutChatChannelNestedInput
   }
 
   export type ChatChannelUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    chatChannelName?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutChatChannelNestedInput
   }
 
   export type ChatChannelCreateManyInput = {
     id?: string
+    chatChannelName: string
     userId: string
+    createdAt?: Date | string
   }
 
   export type ChatChannelUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    chatChannelName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ChatChannelUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    chatChannelName?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ChatMessageCreateInput = {
@@ -4413,26 +4461,6 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type UserRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
-  }
-
-  export type ChatChannelCountOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type ChatChannelMaxOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type ChatChannelMinOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-  }
-
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -4442,6 +4470,46 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type ChatChannelCountOrderByAggregateInput = {
+    id?: SortOrder
+    chatChannelName?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ChatChannelMaxOrderByAggregateInput = {
+    id?: SortOrder
+    chatChannelName?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ChatChannelMinOrderByAggregateInput = {
+    id?: SortOrder
+    chatChannelName?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -4504,20 +4572,6 @@ export namespace Prisma {
     isChatBot?: SortOrder
     chatChannelId?: SortOrder
     userId?: SortOrder
-  }
-
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -4654,6 +4708,10 @@ export namespace Prisma {
     connect?: ChatMessageWhereUniqueInput | ChatMessageWhereUniqueInput[]
   }
 
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
   export type UserUpdateOneRequiredWithoutChatChannelsNestedInput = {
     create?: XOR<UserCreateWithoutChatChannelsInput, UserUncheckedCreateWithoutChatChannelsInput>
     connectOrCreate?: UserCreateOrConnectWithoutChatChannelsInput
@@ -4700,10 +4758,6 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutChatMessagesInput, UserUncheckedCreateWithoutChatMessagesInput>
     connectOrCreate?: UserCreateOrConnectWithoutChatMessagesInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -4785,6 +4839,20 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -4802,20 +4870,6 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -4882,11 +4936,15 @@ export namespace Prisma {
 
   export type ChatChannelCreateWithoutUserInput = {
     id?: string
+    chatChannelName: string
+    createdAt?: Date | string
     chatMessages?: ChatMessageCreateNestedManyWithoutChatChannelInput
   }
 
   export type ChatChannelUncheckedCreateWithoutUserInput = {
     id?: string
+    chatChannelName: string
+    createdAt?: Date | string
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutChatChannelInput
   }
 
@@ -4949,7 +5007,9 @@ export namespace Prisma {
     OR?: ChatChannelScalarWhereInput[]
     NOT?: ChatChannelScalarWhereInput | ChatChannelScalarWhereInput[]
     id?: StringFilter<"ChatChannel"> | string
+    chatChannelName?: StringFilter<"ChatChannel"> | string
     userId?: StringFilter<"ChatChannel"> | string
+    createdAt?: DateTimeFilter<"ChatChannel"> | Date | string
   }
 
   export type UserCreateWithoutChatChannelsInput = {
@@ -5040,12 +5100,16 @@ export namespace Prisma {
 
   export type ChatChannelCreateWithoutChatMessagesInput = {
     id?: string
+    chatChannelName: string
+    createdAt?: Date | string
     user: UserCreateNestedOneWithoutChatChannelsInput
   }
 
   export type ChatChannelUncheckedCreateWithoutChatMessagesInput = {
     id?: string
+    chatChannelName: string
     userId: string
+    createdAt?: Date | string
   }
 
   export type ChatChannelCreateOrConnectWithoutChatMessagesInput = {
@@ -5085,12 +5149,16 @@ export namespace Prisma {
 
   export type ChatChannelUpdateWithoutChatMessagesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    chatChannelName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutChatChannelsNestedInput
   }
 
   export type ChatChannelUncheckedUpdateWithoutChatMessagesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    chatChannelName?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserUpsertWithoutChatMessagesInput = {
@@ -5128,6 +5196,8 @@ export namespace Prisma {
 
   export type ChatChannelCreateManyUserInput = {
     id?: string
+    chatChannelName: string
+    createdAt?: Date | string
   }
 
   export type ChatMessageUpdateWithoutUserInput = {
@@ -5156,16 +5226,22 @@ export namespace Prisma {
 
   export type ChatChannelUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    chatChannelName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     chatMessages?: ChatMessageUpdateManyWithoutChatChannelNestedInput
   }
 
   export type ChatChannelUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    chatChannelName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutChatChannelNestedInput
   }
 
   export type ChatChannelUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    chatChannelName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ChatMessageCreateManyChatChannelInput = {

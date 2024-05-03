@@ -6,16 +6,56 @@ import {
 } from "npm:@langchain/core/prompts";
 import { ChatOllama } from "npm:@langchain/community/chat_models/ollama";
 import { jwtRouteValidation } from "../middleware/jwt-validation.ts";
-import { ChatChannelResponseDto } from "../../models/chat/chat-channel-response-dto.ts";
 import { ChatChannel, ChatMessage } from "../../generated/client/index.d.ts";
 import { AIMessage, HumanMessage } from "npm:@langchain/core/messages";
 import { StringOutputParser } from "npm:@langchain/core/output_parsers";
 import { RedisCacheKeys } from "../../common/redis/redis-cache-keys.ts";
 import redisClient from "../../common/redis/redis-client.ts";
 import { ChatMessageDto } from "../../models/chat/chat-message-dto.ts";
+import { ChatChannelDto, ChatChannelListDto } from "../../models/chat/chat-channel-list-dto.ts";
+import { ChatChannelResponseDto } from "../../models/chat/chat-channel-response-dto.ts";
 
 const prisma = new PrismaClient();
 const router = new Router();
+
+router.get("/chat-channel-list", jwtRouteValidation, async (
+  context: RouterContext<
+    "/chat-channel-list",
+    Record<string | number, string | undefined>,
+    Record<string, any>
+  >,
+) => {
+  try {
+    let chatChannels: ChatChannel[] = await prisma.chatChannel.findMany({
+      where: { userId: context.state.userId },
+      orderBy: { createdAt: "desc"}
+    });
+    if (chatChannels?.length === 0) {
+      const newChatChanel = await prisma.chatChannel.create({
+        data: {
+          userId: context.state.userId,
+          chatChannelName: "Default Chat Channel",
+        },
+      });
+      chatChannels.push(newChatChanel);
+    }
+  
+    const chatChannelsListDto: ChatChannelListDto = new ChatChannelListDto(
+      chatChannels.map((chatChannel: ChatChannel) => {
+        return new ChatChannelDto(
+          chatChannel.id,
+          chatChannel.chatChannelName,
+          chatChannel.userId,
+        );
+      }),
+    );
+    context.response.status = 200;
+    context.response.body = chatChannelsListDto;
+  } catch (error) {
+    context.response.status = 500;
+    context.response.body = { message: error.message };
+  } 
+});
 
 router.get("/chat-channel", jwtRouteValidation, async (
   context: RouterContext<
@@ -24,24 +64,41 @@ router.get("/chat-channel", jwtRouteValidation, async (
     Record<string, any>
   >,
 ) => {
-  // TODO: ideally chat channels should be determined by the chat window that is open in the UI.
-  // for the time being this will be a single chat channel for all messages.
-  let chatChannel: ChatChannel = await prisma.chatChannel.findFirst({
-    where: { userId: context.state.userId },
-    include: { chatMessages: {orderBy: {timestamp: "asc"} }}
-  });
-  if (!chatChannel) {
-    chatChannel = await prisma.chatChannel.create({
-      data: {
-        userId: context.state.userId,
-      },
+  try {
+    let chatChannel: ChatChannel = await prisma.chatChannel.findFirst({
+      where: { userId: context.state.userId },
+      include: { chatMessages: { orderBy: { timestamp: "asc" } } },
     });
+    if (!chatChannel) {
+      chatChannel = await prisma.chatChannel.create({
+        data: {
+          userId: context.state.userId,
+          chatChannelName: "Default Chat Channel",
+        },
+      });
+    }
+    const chatMessages = chatChannel?.chatMessages?.map(
+      (chatMessage: ChatMessage) => {
+        return new ChatMessageDto(
+          chatMessage.id,
+          chatMessage.message,
+          chatMessage.timestamp,
+          chatMessage.isChatBot,
+          chatMessage.chatChannelId,
+          chatMessage.userId,
+          true,
+        );
+      },
+    );
+    context.response.status = 200;
+    context.response.body = new ChatChannelResponseDto(
+      chatChannel.id,
+      chatMessages,
+    );
+  } catch (error) {
+    context.response.status = 500;
+    context.response.body = { message: error.message };
   }
-  const chatMessages = chatChannel?.chatMessages.map((chatMessage: ChatMessage) => {
-    return new ChatMessageDto(chatMessage.id, chatMessage.message, chatMessage.timestamp, chatMessage.isChatBot, chatMessage.chatChannelId, chatMessage.userId, true);
-  });
-  context.response.status = 200;
-  context.response.body = new ChatChannelResponseDto(chatChannel.id, chatMessages);
 });
 
 router.post("/simple-chat", jwtRouteValidation, async (

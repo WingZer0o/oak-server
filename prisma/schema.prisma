@@ -24,10 +24,12 @@ model User {
 }
 
 model ChatChannel {
-  id           String        @id @default(uuid())
-  userId       String
-  user         User          @relation(fields: [userId], references: [id])
-  chatMessages ChatMessage[]
+  id              String        @id @default(uuid())
+  chatChannelName String
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  createdAt       DateTime      @default(now())
+  chatMessages    ChatMessage[]
 }
 
 model ChatMessage {
