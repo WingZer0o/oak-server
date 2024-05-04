@@ -13,10 +13,10 @@ const prisma = new PrismaClient();
 const router = new Router();
 
 router.post(
-  "/login",
+  "/api/login",
   async (
     context: RouterContext<
-      "/login",
+      "/api/login",
       Record<string | number, string | undefined>,
       Record<string, any>
     >,
@@ -51,7 +51,7 @@ router.post(
 
 const invalidRequestBody = (
   context: RouterContext<
-    "/login",
+    "/api/login",
     Record<string | number, string | undefined>,
     Record<string, any>
   >,
@@ -64,7 +64,7 @@ const invalidRequestBody = (
 
 const noUserFound = (
   context: RouterContext<
-    "/login",
+    "/api/login",
     Record<string | number, string | undefined>,
     Record<string, any>
   >,
@@ -78,7 +78,7 @@ const noUserFound = (
 
 const passwordInvalid = (
   context: RouterContext<
-    "/login",
+    "/api/login",
     Record<string | number, string | undefined>,
     Record<string, any>
   >,

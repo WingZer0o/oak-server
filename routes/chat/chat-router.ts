@@ -22,9 +22,9 @@ import { AddChatChannelDto } from "../../models/chat/add-chat-channel-dto.ts";
 const prisma = new PrismaClient();
 const router = new Router();
 
-router.post("/add-chat-channel", jwtRouteValidation, async (
+router.post("/api/add-chat-channel", jwtRouteValidation, async (
   context: RouterContext<
-    "/add-chat-channel",
+    "/api/add-chat-channel",
     Record<string | number, string | undefined>,
     Record<string, any>
   >,
@@ -46,9 +46,9 @@ router.post("/add-chat-channel", jwtRouteValidation, async (
   }
 });
 
-router.get("/chat-channel-list", jwtRouteValidation, async (
+router.get("/api/chat-channel-list", jwtRouteValidation, async (
   context: RouterContext<
-    "/chat-channel-list",
+    "/api/chat-channel-list",
     Record<string | number, string | undefined>,
     Record<string, any>
   >,
@@ -85,9 +85,9 @@ router.get("/chat-channel-list", jwtRouteValidation, async (
   }
 });
 
-router.get("/chat-channel", jwtRouteValidation, async (
+router.get("/api/chat-channel", jwtRouteValidation, async (
   context: RouterContext<
-    "/chat-channel",
+    "/api/chat-channel",
     Record<string | number, string | undefined>,
     Record<string, any>
   >,
@@ -151,9 +151,9 @@ router.get("/chat-channel", jwtRouteValidation, async (
   }
 });
 
-router.post("/simple-chat", jwtRouteValidation, async (
+router.post("/api/simple-chat", jwtRouteValidation, async (
   context: RouterContext<
-    "/simple-chat",
+    "/api/simple-chat",
     Record<string | number, string | undefined>,
     Record<string, any>
   >,
@@ -226,6 +226,28 @@ router.post("/simple-chat", jwtRouteValidation, async (
     context.response.status = 200;
     context.response.body = newChatBotMessage;
   } catch (error) {
+    context.response.status = 500;
+    context.response.body = { message: error.message };
+  }
+});
+
+router.delete("/api/delete-chat-channel", jwtRouteValidation, async (
+  context: RouterContext<
+    "/api/delete-chat-channel",
+    Record<string | number, string | undefined>,
+    Record<string, any>
+  >,
+) => {
+  try {
+    const channelId = context.request.url.searchParams.get("channelId");
+    await prisma.chatMessage.deleteMany({ 
+      where: { chatChannelId: channelId } 
+    });
+    await prisma.chatChannel.delete({
+      where: { id: channelId }
+    });
+    context.response.status = 200;
+  } catch(error) {
     context.response.status = 500;
     context.response.body = { message: error.message };
   }

@@ -9,10 +9,10 @@ const prisma = new PrismaClient();
 const router = new Router();
 
 router.post(
-  "/register",
+  "/api/register",
   async (
     context: RouterContext<
-      "/register",
+      "/api/register",
       Record<string | number, string | undefined>,
       Record<string, any>
     >,
@@ -36,7 +36,7 @@ router.post(
 
 const invalidRequestBody = async (
   context: RouterContext<
-    "/register",
+    "/api/register",
     Record<string | number, string | undefined>,
     Record<string, any>
   >,
@@ -49,7 +49,7 @@ const invalidRequestBody = async (
 
 const usersFound = async (
   context: RouterContext<
-    "/register",
+    "/api/register",
     Record<string | number, string | undefined>,
     Record<string, any>
   >,
@@ -63,7 +63,7 @@ const usersFound = async (
 
 const noUsersFound = async (
   context: RouterContext<
-    "/register",
+    "/api/register",
     Record<string | number, string | undefined>,
     Record<string, any>
   >,
